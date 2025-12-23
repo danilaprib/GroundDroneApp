@@ -19,6 +19,13 @@
             <Setter Property="BorderBrush" Value="Black"/>
             <Setter Property="BorderThickness" Value="2"/>
         </Style>
+        <Style x:Key="ReadingStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Green"></Setter>
+            <Setter Property="FontSize" Value="15"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+            <Setter Property="FontWeight" Value="SemiBold"></Setter>
+            <Setter Property="Margin" Value="2px"></Setter>
+        </Style>
         <Style x:Key="MoveBtnStyle" TargetType="Button">
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Background" Value="WhiteSmoke"/>
@@ -44,6 +51,10 @@
         <Style x:Key="StatusDockPanel" TargetType="DockPanel">
             <Setter Property="Margin" Value="2"/>
         </Style>
+        <Style x:Key="GridBorderStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="2px"/>
+            <Setter Property="BorderBrush" Value="Navy"/>
+        </Style>
     </Window.Resources>
     
     <Grid>
@@ -53,7 +64,11 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Menu VerticalAlignment="Top">
-                <MenuItem Header="File" FontSize="16"></MenuItem>
+                
+                <MenuItem Header="File" FontSize="16">
+
+                    
+                </MenuItem>
                 <MenuItem Header="Settings" FontSize="16"></MenuItem>
                 <MenuItem Header="About" FontSize="16"></MenuItem>
             </Menu>
@@ -66,24 +81,23 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
 
 
 
             <Grid Grid.Column="0">
-                <Border BorderThickness="5px" BorderBrush="Navy"></Border>
-                <DockPanel Margin="20" LastChildFill="False">
-
-
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                <Border Style="{StaticResource GridBorderStyle}"></Border>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
                         <!-- Battery -->
                         <DockPanel x:Name="Battery" Style="{StaticResource StatusDockPanel}">
                             <Label DockPanel.Dock="Left">Battery:</Label>
                             <DockPanel DockPanel.Dock="Right">
                                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">100</TextBlock>
                                 <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center">%</TextBlock>
-                            </DockPanel>                        
+                            </DockPanel>
                         </DockPanel>
                         <!-- Speed -->
                         <DockPanel x:Name="Speed" Style="{StaticResource StatusDockPanel}">
@@ -94,96 +108,116 @@
                             </DockPanel>
                         </DockPanel>
                         <!-- COM-port status-->
-                        <DockPanel x:Name="ComPortStatus" Style="{StaticResource StatusDockPanel}">
+                        <DockPanel  Style="{StaticResource StatusDockPanel}">
                             <Label DockPanel.Dock="Left">COM port:</Label>
-                            <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center"
-                                       Foreground="Red">OFF</TextBlock>
+                            <Ellipse x:Name="ComPortStatusLED" Margin="5px" DockPanel.Dock="Right" Fill="Red"  VerticalAlignment="Center"
+                             Width="10" Height="10">
+
+                            </Ellipse>
+
+                            <TextBlock x:Name="ComPortStatus" DockPanel.Dock="Right" VerticalAlignment="Center" Foreground="Red">
+                                OFF
+                            </TextBlock>
                         </DockPanel>
                     </StackPanel>
 
 
 
-                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
-                                >
+                    <DockPanel Margin="10" Height="300" Width="240"
+                               LastChildFill="False">
+                        <StackPanel x:Name="Readings" DockPanel.Dock="Left">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Style="{StaticResource ReadingStyle}">
+                                    L-Track:
+                                </TextBlock>
+                                <TextBlock DockPanel.Dock="Right" Style="{StaticResource ReadingStyle}">
+                                    OK
+                                </TextBlock>
+                            </DockPanel>
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Style="{StaticResource ReadingStyle}">
+                                    R-Track:
+                                </TextBlock>
+                                <TextBlock DockPanel.Dock="Right" Style="{StaticResource ReadingStyle}">
+                                    OK
+                                </TextBlock>
+                            </DockPanel>
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Style="{StaticResource ReadingStyle}">
+                                    Camera:
+                                </TextBlock>
+                                <TextBlock DockPanel.Dock="Right" Style="{StaticResource ReadingStyle}">
+                                    OK
+                                </TextBlock>
+                            </DockPanel>
+                        </StackPanel>
 
-                        <!-- handbrake-->
-                        <Button Style="{StaticResource HandbrakeBtnStyle}" 
-                Background="Red" Foreground="White"
-                                x:Name="HandbrakeOnBtn" Click="HandbrakeOnBtn_Click">
-                            ON
-                        </Button>
-                        <Button Style="{StaticResource HandbrakeBtnStyle}"
-                Background="Green" Foreground="Black"
-                                x:Name="HandbrakeOffBtn" Click="HandbrakeOffBtn_Click"
-                                IsEnabled="False">
-                            OFF
-                        </Button>
-                    </StackPanel>
+                        <StackPanel x:Name="Visuals" DockPanel.Dock="Right">
+                            <DockPanel LastChildFill="True">
+                                <Rectangle Fill="Green" DockPanel.Dock="Left" 
+                                           Width="20" Height="100">
+                                </Rectangle>                                
+                                <Rectangle Fill="Green" DockPanel.Dock="Right" 
+                                           Width="20" Height="100">
+                                </Rectangle>
+                                <Border BorderBrush="Green" BorderThickness="3" 
+                                        Width="50" Height="70"
+                                        Margin="2">
 
-                    <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
-                        <!-- 100 % speed -->
-                        <Button Style="{StaticResource GearBtnStyle}" IsEnabled="False"
-                             Width="70" x:Name="GearFourBtn"
-                                Click="GearFourBtn_Click">
-                            4 gear
-                        </Button>
-                        <!-- 75 % speed -->
-                        <Button Style="{StaticResource GearBtnStyle}" IsEnabled="False"
-                             Width="70" x:Name="GearThreeBtn"
-                                Click="GearThreeBtn_Click">
-                            3 gear
-                        </Button>
-                        <!-- 50 % speed -->
-                        <Button Style="{StaticResource GearBtnStyle}" IsEnabled="False"
-                             Width="70" x:Name="GearTwoBtn"
-                                Click="GearTwoBtn_Click">
-                            2 gear
-                        </Button>
-                        <!-- 25 % speed -->
-                        <Button Style="{StaticResource GearBtnStyle}" 
-                             Width="70" x:Name="GearOneBtn"
-                                Click="GearOneBtn_Click">
-                            1 gear
-                        </Button>
-                    </StackPanel>
+                                    <DockPanel>
+                                        <Ellipse Fill="Green" Width="20" Height="20"
+                                                 DockPanel.Dock="Top" Margin="2">
 
-                    <!-- move buttons panel-->
-                    <DockPanel DockPanel.Dock="Right" LastChildFill="False" Height="170">
-                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Top"
-                                x:Name="MoveUpBtn">
-                            ^
-                        </Button>
-                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Bottom"
-                                x:Name="MoveDownBtn">
-                            v
-                        </Button>
-                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Left"
-                                x:Name="MoveLeftBtn">
-                            &lt;
-                        </Button>
-                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Right"
-                                x:Name="MoveRightBtn">
-                            &gt;
-                        </Button>
-                        <Button Style="{StaticResource MoveBtnStyle}"
-                                x:Name="MoveCenterBtn">
-                            o
-                        </Button>
+                                        </Ellipse>
+                                        <DockPanel LastChildFill="False"
+                                                   DockPanel.Dock="Bottom">
+                                            <Rectangle Height="10" Width="15" Fill="Green" Margin="2"
+                                                       DockPanel.Dock="Left">
 
+                                            </Rectangle>
+                                            <Rectangle Height="10" Width="15" Fill="Green" Margin="2"
+                                                       DockPanel.Dock="Right">
+
+                                            </Rectangle>
+                                        </DockPanel>
+                                        <Rectangle Fill="Green" Width="30" Height="15"
+                                                 DockPanel.Dock="Bottom" Margin="2">
+
+                                        </Rectangle>
+                                    </DockPanel>
+                                </Border>
+                            </DockPanel>
+                        </StackPanel>
                     </DockPanel>
-                </DockPanel>
+
+                    
+                </StackPanel>
             </Grid>
+   
 
 
 
             <Grid Grid.Column="1">
-                <Border BorderThickness="5px" BorderBrush="Navy"></Border>
-                
-                <StackPanel Grid.Column="1" Margin="20">
-                    <Rectangle Width="300" Height="170"
-                           Margin="20"  Fill="DarkGreen">
+                <Border Style="{StaticResource GridBorderStyle}"></Border>
 
-                    </Rectangle>
+                <StackPanel Grid.Column="1" Margin="20">
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding CurrentDayOfWeek}" FontSize="14"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Margin="2px"/>
+                        <TextBlock Text="{Binding CurrentTime}" FontSize="14"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Margin="2px"/>
+                        <TextBlock Text="{Binding CurrentDate}" FontSize="14"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Margin="2px"/>
+                    </StackPanel>
+                    <MediaElement Source="pack://siteoforigin:,,,/Videos/droneVideo.mp4"
+                        LoadedBehavior="Manual"
+                        Width="200" Height="100"/>
+
+
 
                     <StackPanel Orientation="Horizontal">
                         <Label>Camera pan:</Label>
@@ -202,6 +236,90 @@
                     </StackPanel>
 
                 </StackPanel>
+            </Grid>
+
+
+
+            <Grid Grid.Column="2">
+                <Border Style="{StaticResource GridBorderStyle}"></Border>
+                <DockPanel Margin="20" LastChildFill="False">
+
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+ 
+                    </StackPanel>
+
+
+
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+                             >
+
+                        <!-- handbrake-->
+                        <Button Style="{StaticResource HandbrakeBtnStyle}" 
+             Background="Red" Foreground="White"
+                             x:Name="HandbrakeOnBtn" Click="HandbrakeOnBtn_Click">
+                            ON
+                        </Button>
+                        <Button Style="{StaticResource HandbrakeBtnStyle}"
+             Background="Green" Foreground="Black"
+                             x:Name="HandbrakeOffBtn" Click="HandbrakeOffBtn_Click"
+                             IsEnabled="False">
+                            OFF
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+                        <!-- 100 % speed -->
+                        <Button Style="{StaticResource GearBtnStyle}" IsEnabled="False"
+                          Width="70" x:Name="GearFourBtn"
+                             Click="GearFourBtn_Click">
+                            4 gear
+                        </Button>
+                        <!-- 75 % speed -->
+                        <Button Style="{StaticResource GearBtnStyle}" IsEnabled="False"
+                          Width="70" x:Name="GearThreeBtn"
+                             Click="GearThreeBtn_Click">
+                            3 gear
+                        </Button>
+                        <!-- 50 % speed -->
+                        <Button Style="{StaticResource GearBtnStyle}" IsEnabled="False"
+                          Width="70" x:Name="GearTwoBtn"
+                             Click="GearTwoBtn_Click">
+                            2 gear
+                        </Button>
+                        <!-- 25 % speed -->
+                        <Button Style="{StaticResource GearBtnStyle}" 
+                          Width="70" x:Name="GearOneBtn"
+                             Click="GearOneBtn_Click">
+                            1 gear
+                        </Button>
+                    </StackPanel>
+
+                    <!-- move buttons panel-->
+                    <DockPanel DockPanel.Dock="Right" LastChildFill="False" Height="170">
+                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Top"
+                             x:Name="MoveUpBtn" Click="MoveUpBtn_Click">
+                            ^
+                        </Button>
+                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Bottom"
+                             x:Name="MoveDownBtn" Click="MoveDownBtn_Click">
+                            v
+                        </Button>
+                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Left"
+                             x:Name="MoveLeftBtn">
+                            &lt;
+                        </Button>
+                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Right"
+                             x:Name="MoveRightBtn">
+                            &gt;
+                        </Button>
+                        <Button Style="{StaticResource MoveBtnStyle}"
+                             x:Name="MoveCenterBtn">
+                            o
+                        </Button>
+
+                    </DockPanel>
+                </DockPanel>
             </Grid>
         </Grid>
     </Grid>
