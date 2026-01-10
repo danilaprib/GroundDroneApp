@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GroundDroneApp"
+        xmlns:cmds="clr-namespace:GroundDroneApp.Commands"
         mc:Ignorable="d"
-        Title="Ground drone app" Height="450" Width="800">
+        Title="Ground drone app" Height="450" Width="900">
 
 
     <Window.Resources>
@@ -55,7 +56,44 @@
             <Setter Property="BorderThickness" Value="2px"/>
             <Setter Property="BorderBrush" Value="Navy"/>
         </Style>
+
+
+        <Style x:Key="RepeatBtnStyle" TargetType="RepeatButton">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Background" Value="AliceBlue"/>
+        </Style>
     </Window.Resources>
+
+    <Window.InputBindings>
+
+        <!-- CAMERA COMMAND INPUT BINDINGS -->
+        <KeyBinding Command="cmds:CameraCommands.PressCamUp" Key="Up"/>
+        <KeyBinding Command="cmds:CameraCommands.PressCamDown" Key="Down"/>
+        <KeyBinding Command="cmds:CameraCommands.PressCamLeft" Key="Left"/>
+        <KeyBinding Command="cmds:CameraCommands.PressCamRight" Key="Right"/>
+
+        <!-- TRACKS COMMAND INPUT BINDINGS -->
+        <KeyBinding Command="cmds:TracksCommands.MoveForw" Key="W"/>
+        <KeyBinding Command="cmds:TracksCommands.MoveBack" Key="S"/>
+        <KeyBinding Command="cmds:TracksCommands.MoveLeft" Key="A"/>
+        <KeyBinding Command="cmds:TracksCommands.MoveRight" Key="D"/>
+    </Window.InputBindings>
+    
+    <Window.CommandBindings>
+        <!-- CAMERA COMMAND BINDINGS -->
+        <CommandBinding Command="cmds:CameraCommands.PressCamUp" CanExecute="PressCamUpCommand_CanExecute" Executed="PressCamUpCommand_Executed"/>
+        <CommandBinding Command="cmds:CameraCommands.PressCamDown" CanExecute="PressCamDownCommand_CanExecute" Executed="PressCamDownCommand_Executed"/>
+        <CommandBinding Command="cmds:CameraCommands.PressCamLeft" CanExecute="PressCamLeftCommand_CanExecute" Executed="PressCamLeftCommand_Executed"/>
+        <CommandBinding Command="cmds:CameraCommands.PressCamRight" CanExecute="PressCamRightCommand_CanExecute" Executed="PressCamRightCommand_Executed"/>
+
+        <!-- TRACKS COMMAND BINDINGS -->
+        <CommandBinding Command="cmds:TracksCommands.MoveForw" CanExecute="MoveForwCommand_CanExecute" Executed="MoveForwCommand_Executed"/>
+        <CommandBinding Command="cmds:TracksCommands.MoveBack" CanExecute="MoveBackCommand_CanExecute" Executed="MoveBackCommand_Executed"/>
+        <CommandBinding Command="cmds:TracksCommands.MoveLeft" CanExecute="MoveLeftCommand_CanExecute" Executed="MoveLeftCommand_Executed"/>
+        <CommandBinding Command="cmds:TracksCommands.MoveRight" CanExecute="MoveRightCommand_CanExecute" Executed="MoveRightCommand_Executed"/>
+    </Window.CommandBindings>
     
     <Grid>
         <Grid.RowDefinitions>
@@ -220,20 +258,18 @@
 
 
                     <StackPanel Orientation="Horizontal">
-                        <Label>Camera pan:</Label>
-                        <TextBox>30.5°</TextBox>
-
+                        <Label>Camera vertical:</Label>
+                        <TextBox Name="CamVert" Width="30">0</TextBox>
+                        <TextBlock>°</TextBlock>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Label>Camera tilt:</Label>
-                        <TextBox>30.5°</TextBox>
+                        <Label>Camera horizontal:</Label>
+                        <TextBox Name="CamHoriz" Width="30">0</TextBox>
+                        <TextBlock>°</TextBlock>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal">
-                        <Label>Camera zoom:</Label>
-                        <TextBox>1.5x</TextBox>
-                    </StackPanel>
+
 
                 </StackPanel>
             </Grid>
@@ -242,84 +278,41 @@
 
             <Grid Grid.Column="2">
                 <Border Style="{StaticResource GridBorderStyle}"></Border>
-                <DockPanel Margin="20" LastChildFill="False">
-
-
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
- 
-                    </StackPanel>
-
-
-
-                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
-                             >
-
-                        <!-- handbrake-->
-                        <Button Style="{StaticResource HandbrakeBtnStyle}" 
-             Background="Red" Foreground="White"
-                             x:Name="HandbrakeOnBtn" Click="HandbrakeOnBtn_Click">
-                            ON
-                        </Button>
-                        <Button Style="{StaticResource HandbrakeBtnStyle}"
-             Background="Green" Foreground="Black"
-                             x:Name="HandbrakeOffBtn" Click="HandbrakeOffBtn_Click"
-                             IsEnabled="False">
-                            OFF
-                        </Button>
-                    </StackPanel>
-
-                    <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
-                        <!-- 100 % speed -->
-                        <Button Style="{StaticResource GearBtnStyle}" IsEnabled="False"
-                          Width="70" x:Name="GearFourBtn"
-                             Click="GearFourBtn_Click">
-                            4 gear
-                        </Button>
-                        <!-- 75 % speed -->
-                        <Button Style="{StaticResource GearBtnStyle}" IsEnabled="False"
-                          Width="70" x:Name="GearThreeBtn"
-                             Click="GearThreeBtn_Click">
-                            3 gear
-                        </Button>
-                        <!-- 50 % speed -->
-                        <Button Style="{StaticResource GearBtnStyle}" IsEnabled="False"
-                          Width="70" x:Name="GearTwoBtn"
-                             Click="GearTwoBtn_Click">
-                            2 gear
-                        </Button>
-                        <!-- 25 % speed -->
-                        <Button Style="{StaticResource GearBtnStyle}" 
-                          Width="70" x:Name="GearOneBtn"
-                             Click="GearOneBtn_Click">
-                            1 gear
-                        </Button>
-                    </StackPanel>
-
-                    <!-- move buttons panel-->
-                    <DockPanel DockPanel.Dock="Right" LastChildFill="False" Height="170">
-                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Top"
-                             x:Name="MoveUpBtn" Click="MoveUpBtn_Click">
-                            ^
-                        </Button>
-                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Bottom"
-                             x:Name="MoveDownBtn" Click="MoveDownBtn_Click">
-                            v
-                        </Button>
-                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Left"
-                             x:Name="MoveLeftBtn">
-                            &lt;
-                        </Button>
-                        <Button Style="{StaticResource MoveBtnStyle}" DockPanel.Dock="Right"
-                             x:Name="MoveRightBtn">
-                            &gt;
-                        </Button>
-                        <Button Style="{StaticResource MoveBtnStyle}"
-                             x:Name="MoveCenterBtn">
-                            o
-                        </Button>
-
+                <StackPanel Margin="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <DockPanel LastChildFill="False" Width="100">
+                        <Button DockPanel.Dock="Left" Width="40" Height="40" Background="Green" Foreground="White" FontSize="18" FontWeight="Bold" Content="OFF"/>
+                        <Button DockPanel.Dock="Right" Width="40" Height="40" Background="Red" Foreground="White" FontSize="18" FontWeight="Bold" Content="ON"/>
                     </DockPanel>
-                </DockPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                        <Button Margin="5" Height="50" Width="30" Background="Blue" Foreground="White" FontSize="30" FontWeight="Bold">1</Button>
+                        <Button Margin="5" Height="50" Width="30" Background="Blue" Foreground="White" FontSize="30" FontWeight="Bold">2</Button>
+                        <Button Margin="5" Height="50" Width="30" Background="Blue" Foreground="White" FontSize="30" FontWeight="Bold">3</Button>
+                        <Button Margin="5" Height="50" Width="30" Background="Blue" Foreground="White" FontSize="30" FontWeight="Bold">4</Button>
+                        <Button Margin="5" Height="50" Width="30" Background="Blue" Foreground="White" FontSize="30" FontWeight="Bold">5</Button>
+                    </StackPanel>
+
+                    <DockPanel LastChildFill="False">
+
+                        <GroupBox Margin="2" DockPanel.Dock="Left" Header="Tracks" BorderBrush="Blue">
+                            <DockPanel>
+                                <RepeatButton Name="MoveLeftBtn" DockPanel.Dock="Left" Style="{StaticResource RepeatBtnStyle}" Click="MoveLeftBtn_Click">left</RepeatButton>
+                                <RepeatButton Name="MoveRightBtn" DockPanel.Dock="Right" Style="{StaticResource RepeatBtnStyle}" Click="MoveRightBtn_Click">right</RepeatButton>
+                                <RepeatButton Name="MoveForwBtn" DockPanel.Dock="Top" Style="{StaticResource RepeatBtnStyle}" Click="MoveForwBtn_Click">forw</RepeatButton>
+                                <RepeatButton Name="MoveBackBtn" DockPanel.Dock="Bottom" Style="{StaticResource RepeatBtnStyle}" Click="MoveBackBtn_Click">back</RepeatButton>
+                            </DockPanel>
+                        </GroupBox>
+
+                        <GroupBox Margin="2" DockPanel.Dock="Left" Header="Camera" BorderBrush="Blue">
+                            <DockPanel>
+                                <RepeatButton Name="RotateCamLeftBtn" DockPanel.Dock="Left" Style="{StaticResource RepeatBtnStyle}" Click='RotateCamLeftBtn_Click'>left</RepeatButton>
+                                <RepeatButton Name="RotateCamRightBtn" DockPanel.Dock="Right" Style="{StaticResource RepeatBtnStyle}" Click="RotateCamRightBtn_Click">right</RepeatButton>
+                                <RepeatButton Name="RotateCamUpBtn" DockPanel.Dock="Top" Style="{StaticResource RepeatBtnStyle}" Click="RotateCamUpBtn_Click">up</RepeatButton>
+                                <RepeatButton Name="RotateCamDownBtn" DockPanel.Dock="Bottom" Style="{StaticResource RepeatBtnStyle}" Click="RotateCamDownBtn_Click">down</RepeatButton>
+                            </DockPanel>
+                        </GroupBox>
+                    </DockPanel>
+                </StackPanel>
+
             </Grid>
         </Grid>
     </Grid>
