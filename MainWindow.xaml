@@ -20,6 +20,19 @@
             <Setter Property="BorderBrush" Value="Black"/>
             <Setter Property="BorderThickness" Value="2"/>
         </Style>
+
+
+        <Style x:Key="TrackStyle" TargetType="Rectangle">
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=MoveLeftBtn, Path=IsPressed}" Value="True">
+                    <Setter Property="Fill" Value="Orange" />
+                    
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
         <Style x:Key="ReadingStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="Green"></Setter>
             <Setter Property="FontSize" Value="15"></Setter>
@@ -27,15 +40,16 @@
             <Setter Property="FontWeight" Value="SemiBold"></Setter>
             <Setter Property="Margin" Value="2px"></Setter>
         </Style>
-        <Style x:Key="MoveBtnStyle" TargetType="Button">
+        <Style x:Key="MoveBtnStyle" TargetType="RepeatButton">
             <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="Background" Value="WhiteSmoke"/>
-            <Setter Property="FontSize" Value="20"/>
+            
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="Width" Value="45"/>
             <Setter Property="Height" Value="45"/>
             <Setter Property="Margin" Value="3"/>
             <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="BorderThickness" Value="4"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+           
         </Style>
         <Style x:Key="HandbrakeBtnStyle" TargetType="Button">
             <Setter Property="Foreground" Value="Black"/>
@@ -62,7 +76,12 @@
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Width" Value="30"/>
             <Setter Property="Height" Value="30"/>
-            <Setter Property="Background" Value="AliceBlue"/>
+            
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="Green"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
 
@@ -79,6 +98,8 @@
         <KeyBinding Command="cmds:TracksCommands.MoveBack" Key="S"/>
         <KeyBinding Command="cmds:TracksCommands.MoveLeft" Key="A"/>
         <KeyBinding Command="cmds:TracksCommands.MoveRight" Key="D"/>
+
+        <KeyBinding Command="cmds:ApplicationCommands.KillApp" Key="K"/>
     </Window.InputBindings>
     
     <Window.CommandBindings>
@@ -93,6 +114,9 @@
         <CommandBinding Command="cmds:TracksCommands.MoveBack" CanExecute="MoveBackCommand_CanExecute" Executed="MoveBackCommand_Executed"/>
         <CommandBinding Command="cmds:TracksCommands.MoveLeft" CanExecute="MoveLeftCommand_CanExecute" Executed="MoveLeftCommand_Executed"/>
         <CommandBinding Command="cmds:TracksCommands.MoveRight" CanExecute="MoveRightCommand_CanExecute" Executed="MoveRightCommand_Executed"/>
+        
+        <!-- APPLICATION COMMANDS -->
+        <CommandBinding Command="cmds:ApplicationCommands.KillApp" CanExecute="KillAppCommand_CanExecute" Executed="KillAppCommand_Executed"/>
     </Window.CommandBindings>
     
     <Grid>
@@ -145,16 +169,18 @@
                                 <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center">km/h</TextBlock>
                             </DockPanel>
                         </DockPanel>
+                        
                         <!-- COM-port status-->
                         <DockPanel  Style="{StaticResource StatusDockPanel}">
                             <Label DockPanel.Dock="Left">COM port:</Label>
                             <Ellipse x:Name="ComPortStatusLED" Margin="5px" DockPanel.Dock="Right" Fill="Red"  VerticalAlignment="Center"
                              Width="10" Height="10">
 
+
                             </Ellipse>
 
-                            <TextBlock x:Name="ComPortStatus" DockPanel.Dock="Right" VerticalAlignment="Center" Foreground="Red">
-                                OFF
+                            <TextBlock x:Name="ComPortStatus" DockPanel.Dock="Right" VerticalAlignment="Center">
+
                             </TextBlock>
                         </DockPanel>
                     </StackPanel>
@@ -188,12 +214,16 @@
                                     OK
                                 </TextBlock>
                             </DockPanel>
+
+                            <Button x:Name="KillBtn" FontSize="25" Margin="5" Click="KillBtn_Click">
+                                KILL
+                            </Button>
                         </StackPanel>
 
                         <StackPanel x:Name="Visuals" DockPanel.Dock="Right">
                             <DockPanel LastChildFill="True">
                                 <Rectangle Fill="Green" DockPanel.Dock="Left" 
-                                           Width="20" Height="100">
+                                           Width="20" Height="100" Style="{StaticResource TrackStyle}">
                                 </Rectangle>                                
                                 <Rectangle Fill="Green" DockPanel.Dock="Right" 
                                            Width="20" Height="100">
@@ -281,7 +311,7 @@
                 <StackPanel Margin="20" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <DockPanel LastChildFill="False" Width="100">
                         <Button DockPanel.Dock="Left" Width="40" Height="40" Background="Green" Foreground="White" FontSize="18" FontWeight="Bold" Content="OFF"/>
-                        <Button DockPanel.Dock="Right" Width="40" Height="40" Background="Red" Foreground="White" FontSize="18" FontWeight="Bold" Content="ON"/>
+                        <Button x:Name="HandbrakeOffBtn" DockPanel.Dock="Right" Width="40" Height="40" Background="Red" Foreground="White" FontSize="18" FontWeight="Bold" Content="ON" Click="HandbrakeOffBtn_Click"/>
                     </DockPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                         <Button Margin="5" Height="50" Width="30" Background="Blue" Foreground="White" FontSize="30" FontWeight="Bold">1</Button>
@@ -295,19 +325,19 @@
 
                         <GroupBox Margin="2" DockPanel.Dock="Left" Header="Tracks" BorderBrush="Blue">
                             <DockPanel>
-                                <RepeatButton Name="MoveLeftBtn" DockPanel.Dock="Left" Style="{StaticResource RepeatBtnStyle}" Click="MoveLeftBtn_Click">left</RepeatButton>
-                                <RepeatButton Name="MoveRightBtn" DockPanel.Dock="Right" Style="{StaticResource RepeatBtnStyle}" Click="MoveRightBtn_Click">right</RepeatButton>
-                                <RepeatButton Name="MoveForwBtn" DockPanel.Dock="Top" Style="{StaticResource RepeatBtnStyle}" Click="MoveForwBtn_Click">forw</RepeatButton>
-                                <RepeatButton Name="MoveBackBtn" DockPanel.Dock="Bottom" Style="{StaticResource RepeatBtnStyle}" Click="MoveBackBtn_Click">back</RepeatButton>
+                                <RepeatButton Name="MoveLeftBtn" DockPanel.Dock="Left" Style="{StaticResource MoveBtnStyle}" Click="MoveLeftBtn_Click">A</RepeatButton>
+                                <RepeatButton Name="MoveRightBtn" DockPanel.Dock="Right" Style="{StaticResource MoveBtnStyle}" Click="MoveRightBtn_Click">D</RepeatButton>
+                                <RepeatButton Name="MoveForwBtn" DockPanel.Dock="Top" Style="{StaticResource MoveBtnStyle}" Click="MoveForwBtn_Click">W</RepeatButton>
+                                <RepeatButton Name="MoveBackBtn" DockPanel.Dock="Bottom" Style="{StaticResource MoveBtnStyle}" Click="MoveBackBtn_Click">S</RepeatButton>
                             </DockPanel>
                         </GroupBox>
 
                         <GroupBox Margin="2" DockPanel.Dock="Left" Header="Camera" BorderBrush="Blue">
                             <DockPanel>
-                                <RepeatButton Name="RotateCamLeftBtn" DockPanel.Dock="Left" Style="{StaticResource RepeatBtnStyle}" Click='RotateCamLeftBtn_Click'>left</RepeatButton>
-                                <RepeatButton Name="RotateCamRightBtn" DockPanel.Dock="Right" Style="{StaticResource RepeatBtnStyle}" Click="RotateCamRightBtn_Click">right</RepeatButton>
-                                <RepeatButton Name="RotateCamUpBtn" DockPanel.Dock="Top" Style="{StaticResource RepeatBtnStyle}" Click="RotateCamUpBtn_Click">up</RepeatButton>
-                                <RepeatButton Name="RotateCamDownBtn" DockPanel.Dock="Bottom" Style="{StaticResource RepeatBtnStyle}" Click="RotateCamDownBtn_Click">down</RepeatButton>
+                                <RepeatButton Name="RotateCamLeftBtn" DockPanel.Dock="Left" Style="{StaticResource RepeatBtnStyle}" Click="RotateCamLeftBtn_Click" KeyUp="RotateCamLeftBtn_KeyUp">left</RepeatButton>
+                                <RepeatButton Name="RotateCamRightBtn" DockPanel.Dock="Right" Style="{StaticResource RepeatBtnStyle}" Click="RotateCamRightBtn_Click" KeyUp="RotateCamRightBtn_KeyUp">right</RepeatButton>
+                                <RepeatButton Name="RotateCamUpBtn" DockPanel.Dock="Top" Style="{StaticResource RepeatBtnStyle}" Click="RotateCamUpBtn_Click" KeyUp="RotateCamUpBtn_KeyUp">up</RepeatButton>
+                                <RepeatButton Name="RotateCamDownBtn" DockPanel.Dock="Bottom" Style="{StaticResource RepeatBtnStyle}" Click="RotateCamDownBtn_Click" KeyUp="RotateCamDownBtn_KeyUp">down</RepeatButton>
                             </DockPanel>
                         </GroupBox>
                     </DockPanel>
